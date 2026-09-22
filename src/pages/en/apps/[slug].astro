@@ -1,0 +1,42 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PseoPage from '../../../components/PseoPage.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const allPages = await getCollection('pseo');
+  const appMap = new Map(
+    allPages
+      .filter((page) => page.data.type === 'pseo_app')
+      .map((page) => [page.data.url.split('/').filter(Boolean).at(-1), page]),
+  );
+  const pages = allPages.filter((page) => page.data.type === 'pseo_apps');
+  return pages.map((page) => ({
+    params: {
+      slug: page.data.url.split('/').filter(Boolean).at(-1) || page.id,
+    },
+    props: {
+      page,
+      guideApps: page.data.listicle_apps
+        .map((slug) => appMap.get(slug))
+        .filter(Boolean),
+    },
+  }));
+}
+
+interface Props {
+  page: CollectionEntry<'pseo'>;
+  guideApps: CollectionEntry<'pseo'>[];
+}
+
+const { page, guideApps } = Astro.props;
+---
+
+<BaseLayout
+  title={page.data.title}
+  description={page.data.description}
+  canonicalUrl={page.data.canonical_url}
+  image={page.data.image}
+>
+  <PseoPage page={page} guideApps={guideApps} />
+</BaseLayout>

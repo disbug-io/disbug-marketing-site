@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BlogIndex from '../../../components/BlogIndex.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getBlogPosts, paginate, totalPages } from '../../../lib/content';
+
+const posts = await getBlogPosts();
+const pages = totalPages(posts);
+const indexPage = (await getCollection('blog')).find(
+  (page) => page.data.url === '/en/blog/',
+);
+---
+
+<BaseLayout
+  title="Disbug Blog"
+  description="Practical guides to browser bug reporting, software testing, developer productivity, and shipping better products with AI coding agents."
+  canonicalUrl="https://disbug.io/en/blog/"
+>
+  <BlogIndex
+    title={indexPage?.data.title || 'Disbug Blog'}
+    description={indexPage?.data.description || ''}
+    posts={paginate(posts, 1)}
+    currentPage={1}
+    totalPages={pages}
+  />
+</BaseLayout>

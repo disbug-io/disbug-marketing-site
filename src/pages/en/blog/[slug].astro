@@ -1,0 +1,99 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BlogCard from '../../../components/BlogCard.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getBlogPosts, relatedPosts } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({
+    params: {
+      slug: post.data.url.split('/').filter(Boolean).at(-1) || post.id,
+    },
+    props: { post, related: relatedPosts(post, posts) },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  related: CollectionEntry<'blog'>[];
+}
+
+const { post, related } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  canonicalUrl={post.data.canonical_url}
+  image={post.data.image}
+  type="article"
+  publishedAt={post.data.published_at}
+  modifiedAt={post.data.updated_at}
+  author={post.data.author}
+>
+  <main class="bg-stone-50">
+    <article>
+      <header class="border-b border-stone-200 bg-white">
+        <div class="mx-auto max-w-3xl px-6 py-9 md:py-12">
+          <div class="mb-4 flex flex-wrap items-center gap-3 text-xs text-stone-400">
+            <a
+              href="/en/blog/"
+              class="font-mono uppercase hover:text-stone-900"
+            >
+              Blog
+            </a>
+            {post.data.author && <span>{post.data.author}</span>}
+            {post.data.published_at && (
+              <span class="font-mono uppercase">
+                {String(post.data.published_at)}
+              </span>
+            )}
+          </div>
+          <h1 class="font-heading text-3xl leading-tight text-stone-900 md:text-4xl">
+            {post.data.title}
+          </h1>
+          {post.data.tags.length > 0 && (
+            <div class="mt-6 flex flex-wrap gap-2">
+              {post.data.tags.map((tag, index) => (
+                <a
+                  href={`/en/blog/tags/${post.data.tag_slugs[index]}/`}
+                  class="border border-stone-200 px-2.5 py-1 font-mono text-[11px] uppercase text-stone-400"
+                >
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </header>
+      {post.data.image && (
+        <div class="mx-auto max-w-3xl px-6 pt-8 md:pt-10">
+          <img
+            src={post.data.image}
+            alt={post.data.title}
+            class="aspect-[16/9] w-full border border-stone-200 bg-white object-cover"
+          />
+        </div>
+      )}
+      <div class="mx-auto max-w-3xl px-6 py-10 md:py-12">
+        <div class="prose prose-stone max-w-none prose-headings:font-heading prose-headings:leading-tight prose-headings:text-stone-900 prose-p:text-stone-500 prose-a:text-stone-900 prose-img:border prose-img:border-stone-200 prose-img:bg-white prose-li:text-stone-500">
+          <Content />
+        </div>
+      </div>
+    </article>
+    {related.length > 0 && (
+      <section class="border-t border-stone-200 bg-white">
+        <div class="mx-auto max-w-6xl px-6 py-12">
+          <h2 class="font-heading text-3xl text-stone-900">Related Posts</h2>
+          <div class="mt-6 grid gap-5 md:grid-cols-3">
+            {related.map((item) => (
+              <BlogCard post={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>

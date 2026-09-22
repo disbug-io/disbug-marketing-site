@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  --font-heading: 'Newsreader', Georgia, serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+
+  --color-stone-0: #fff;
+  --color-ink: var(--color-stone-900);
+
+  --animate-marquee: marquee 25s linear infinite;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out forwards;
+  --animate-float: float 3s ease-in-out infinite;
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+@layer base {
+  [x-cloak] {
+    display: none !important;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-stone-50 font-sans text-stone-800;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+@utility ds-label {
+  @apply font-mono text-xs font-semibold uppercase tracking-[0.48px];
+}
+
+@utility ds-label-sm {
+  @apply font-mono text-[11px] font-semibold uppercase tracking-[0.48px];
+}
+
+@layer components {
+  .btn {
+    @apply box-border inline-flex h-8 shrink-0 cursor-pointer select-none items-center justify-center gap-x-2 whitespace-nowrap rounded-xl border px-4 py-1.5 text-center font-mono text-sm font-semibold uppercase leading-5 transition-all duration-75 ease-in active:scale-95 active:shadow-none;
+  }
+
+  .btn-sm {
+    @apply h-6 rounded-lg px-3 py-1 text-xs leading-4;
+  }
+
+  .btn-accent {
+    @apply border-lime-700 bg-lime-600 text-stone-50 hover:bg-lime-700;
+  }
+
+  .btn-primary {
+    @apply border-2 border-stone-800 bg-stone-700 text-stone-50 hover:bg-stone-800;
+  }
+
+  .btn-secondary {
+    @apply border-stone-200 bg-stone-0 text-stone-800 hover:border-stone-300 hover:bg-stone-100;
+  }
+
+  .btn-ghost {
+    @apply border-transparent text-stone-800 hover:bg-stone-100;
+  }
+
+  .btn-block {
+    @apply w-full;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase;
+  }
+
+  .badge-dark {
+    @apply bg-stone-800 text-white;
+  }
+
+  .badge-ok {
+    @apply bg-emerald-100 text-emerald-700;
+  }
+
+  .badge-pill {
+    @apply rounded-full;
+  }
+}
+
+.prose .content-figure {
+  margin-block: 1.75em;
+}
+
+.prose .content-figure > img {
+  margin-block: 0;
+}
+
+.prose .content-figure > figcaption {
+  margin-top: 0.75em;
+  text-align: center;
+  font-size: 0.875em;
+  line-height: 1.5;
+  color: var(--color-stone-500);
+}
+
+.prose blockquote {
+  margin-block: 1.75em;
+  border-left: 3px solid var(--color-stone-300);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background-color: var(--color-stone-50);
+  padding: 1em 1.25em;
+  color: var(--color-stone-600);
+  font-weight: 400;
+  font-style: normal;
+}
+
+.prose blockquote p:first-child {
+  margin-top: 0;
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none;
+}
+
+.prose > h1:first-child {
+  display: none;
+}
+
+.prose img {
+  border: 1px solid var(--color-stone-200);
+  border-radius: 0.75rem;
+}

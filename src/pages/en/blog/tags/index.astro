@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import TaxonomyIndex from '../../../../components/TaxonomyIndex.astro';
+import { getBlogPosts } from '../../../../lib/content';
+
+const counts = new Map<string, { name: string; count: number }>();
+for (const post of await getBlogPosts()) {
+  post.data.tag_slugs.forEach((slug, index) => {
+    const current = counts.get(slug);
+    counts.set(slug, {
+      name: post.data.tags[index] || slug,
+      count: (current?.count || 0) + 1,
+    });
+  });
+}
+const tags = [...counts.entries()].sort((left, right) =>
+  left[1].name.localeCompare(right[1].name),
+);
+---
+
+<BaseLayout
+  title="Topics"
+  description="Browse Disbug blog articles by topic."
+  robots="noindex, follow"
+>
+  <TaxonomyIndex
+    title="Topics"
+    items={tags.map(([slug, tag]) => ({ slug, ...tag }))}
+    itemUrlPrefix="/en/blog/tags/"
+  />
+</BaseLayout>

@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BlogIndex from '../../../../components/BlogIndex.astro';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getBlogPosts, paginate, totalPages } from '../../../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  const pages = totalPages(posts);
+  return Array.from({ length: Math.max(0, pages - 1) }, (_, index) => {
+    const page = index + 2;
+    return {
+      params: { page: String(page) },
+      props: { posts: paginate(posts, page), page, pages },
+    };
+  });
+}
+
+const { posts, page, pages } = Astro.props;
+const indexPage = (await getCollection('blog')).find(
+  (entry) => entry.data.url === '/en/blog/',
+);
+---
+
+<BaseLayout
+  title={`Disbug Blog — page ${page}`}
+  description="Practical guides to browser bug reporting, software testing, developer productivity, and AI-assisted development."
+  canonicalUrl={`https://disbug.io/en/blog/page/${page}/`}
+>
+  <BlogIndex
+    title={indexPage?.data.title || 'Disbug Blog'}
+    description={indexPage?.data.description || ''}
+    posts={posts}
+    currentPage={page}
+    totalPages={pages}
+  />
+</BaseLayout>
