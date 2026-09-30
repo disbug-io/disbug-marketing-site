@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  posts: CollectionEntry<'blog'>[];
+  currentPage?: number;
+  totalPages?: number;
+  baseUrl?: string;
+}
+
+const {
+  title,
+  description = '',
+  posts,
+  currentPage = 1,
+  totalPages = 1,
+  baseUrl = '/en/blog/',
+} = Astro.props;
+const previousUrl =
+  currentPage === 2 ? baseUrl : `${baseUrl}page/${currentPage - 1}/`;
+const nextUrl = `${baseUrl}page/${currentPage + 1}/`;
+---
+
+<main class="bg-stone-50">
+  <section class="border-b border-stone-200 bg-white">
+    <div class="mx-auto max-w-5xl px-6 py-9 md:py-12">
+      <h1 class="max-w-3xl font-heading text-3xl leading-tight text-stone-900 md:text-4xl">
+        {title}
+      </h1>
+      {description && (
+        <p class="mt-4 max-w-2xl text-base leading-7 text-stone-500">
+          {description}
+        </p>
+      )}
+    </div>
+  </section>
+  <section class="mx-auto max-w-5xl px-6 py-8 md:py-10">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {posts.map((post) => (
+        <BlogCard post={post} />
+      ))}
+    </div>
+    {totalPages > 1 && (
+      <nav
+        class="mt-10 flex items-center justify-between border-t border-stone-200 pt-6"
+        aria-label="Blog pagination"
+      >
+        <div>
+          {currentPage > 1 && (
+            <a
+              class="font-mono text-xs uppercase text-stone-900 underline underline-offset-4 hover:text-stone-900/70"
+              href={previousUrl}
+              rel="prev"
+            >
+              &larr; Newer
+            </a>
+          )}
+        </div>
+        <span class="font-mono text-xs uppercase text-stone-400">
+          Page {currentPage} of {totalPages}
+        </span>
+        <div>
+          {currentPage < totalPages && (
+            <a
+              class="font-mono text-xs uppercase text-stone-900 underline underline-offset-4 hover:text-stone-900/70"
+              href={nextUrl}
+              rel="next"
+            >
+              Older &rarr;
+            </a>
+          )}
+        </div>
+      </nav>
+    )}
+  </section>
+</main>

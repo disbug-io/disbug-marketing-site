@@ -1,0 +1,39 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PseoPage from '../../../components/PseoPage.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const pages = (await getCollection('pseo')).filter(
+    (page) => page.data.type === 'pseo_app',
+  );
+  return pages.map((page) => ({
+    params: {
+      slug: page.data.url.split('/').filter(Boolean).at(-1) || page.id,
+    },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: CollectionEntry<'pseo'>;
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout
+  title={page.data.title}
+  description={page.data.description}
+  canonicalUrl={page.data.canonical_url}
+  image={page.data.image}
+>
+  <PseoPage
+    page={page}
+    showProductCta={[
+      '/en/app/tinytake/',
+      '/en/app/page-ruler-redux/',
+      '/en/app/snapz-pro/',
+    ].includes(page.data.url)}
+  />
+</BaseLayout>

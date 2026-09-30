@@ -1,0 +1,150 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { signupUrl } from '../config';
+import { pseoAppDetails } from '../lib/content';
+
+interface Props {
+  page: CollectionEntry<'pseo'>;
+  guideApps?: CollectionEntry<'pseo'>[];
+  showProductCta?: boolean;
+}
+
+const { page, guideApps = [], showProductCta = false } = Astro.props;
+const { Content } = await render(page);
+---
+
+<main class="bg-stone-50">
+  <section class="border-b border-stone-200 bg-white">
+    <div
+      class:list={[
+        'mx-auto px-6 py-9 md:py-12',
+        page.data.image && page.data.type === 'pseo_app'
+          ? 'grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_220px] md:items-center'
+          : 'max-w-3xl',
+      ]}
+    >
+      <div>
+        <h1 class="max-w-3xl font-heading text-3xl leading-tight text-stone-900 md:text-4xl">
+          {page.data.title}
+        </h1>
+      </div>
+      {page.data.image && page.data.type === 'pseo_app' && (
+        <div class="border border-stone-200 bg-stone-100 p-4">
+          <img
+            src={page.data.image}
+            alt={page.data.title}
+            class="mx-auto aspect-square max-h-44 object-contain"
+          />
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 py-10 md:py-12">
+    <div class="prose prose-stone max-w-none prose-headings:font-heading prose-headings:leading-tight prose-headings:text-stone-900 prose-p:text-stone-500 prose-a:text-stone-900 prose-img:border prose-img:border-stone-200 prose-img:bg-white prose-li:text-stone-500">
+      <Content />
+    </div>
+    {showProductCta && (
+      <div class="mt-12">
+        <aside class="border border-stone-200 bg-white p-6 md:p-8">
+          <p class="ds-label-sm text-stone-400">
+            From the makers of this directory
+          </p>
+          <h2 class="mt-3 font-heading text-2xl leading-tight text-stone-900 md:text-3xl">
+            Hand your coding agent the whole bug, not a screenshot.
+          </h2>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-stone-500">
+            Disbug captures a browser bug as structured evidence — screen
+            recording, console and network logs, DOM state and the exact steps —
+            so Claude Code, Codex or Cursor can work from what actually happened
+            instead of a vague description.
+          </p>
+          <div class="mt-6 flex flex-wrap items-center gap-4">
+            <a href={signupUrl} class="btn btn-primary">
+              Start free
+            </a>
+            <a
+              href="/"
+              class="font-mono text-xs uppercase text-stone-900 underline underline-offset-4 hover:text-stone-900/70"
+            >
+              See how it works
+            </a>
+          </div>
+        </aside>
+      </div>
+    )}
+  </section>
+
+  {guideApps.length > 0 && (
+    <section class="border-t border-stone-200 bg-white">
+      <div class="mx-auto max-w-5xl px-6 py-10 md:py-12">
+        <div class="grid grid-cols-1 gap-4">
+          {guideApps.map((app) => {
+            const details = pseoAppDetails(app);
+            return (
+              <article class="border border-stone-200 bg-white p-5 md:p-6">
+                <div class="grid grid-cols-[96px_minmax(0,1fr)] gap-4 md:grid-cols-[112px_minmax(0,1fr)] md:gap-6">
+                  <a
+                    href={app.data.url}
+                    class="flex h-24 w-24 items-center justify-center border border-stone-200 bg-stone-100 p-3 md:h-28 md:w-28"
+                  >
+                    {app.data.image ? (
+                      <img
+                        src={app.data.image}
+                        alt={app.data.title}
+                        loading="lazy"
+                        decoding="async"
+                        class="max-h-full object-contain"
+                      />
+                    ) : (
+                      <span class="font-heading text-4xl leading-none text-stone-900">
+                        {details.visualInitial}
+                      </span>
+                    )}
+                  </a>
+                  <div class="min-w-0">
+                    <h2 class="font-heading text-xl leading-tight text-stone-900 md:text-2xl">
+                      <a href={app.data.url} class="hover:text-stone-900/70">
+                        {app.data.title}
+                      </a>
+                    </h2>
+                    <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm leading-6 text-stone-500">
+                      {details.creator && <span>{details.creator}</span>}
+                      {details.priceLabel && (
+                        <span class="font-medium text-stone-900">
+                          {details.priceLabel}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {details.featureSummary && (
+                  <div class="mt-5 border-t border-stone-200 pt-4">
+                    <p class="text-sm font-semibold text-stone-900">
+                      Key features of the app:
+                    </p>
+                    <p class="mt-2 text-base leading-7 text-stone-500">
+                      {details.featureSummary}
+                    </p>
+                  </div>
+                )}
+
+                {details.externalUrl && (
+                  <div class="mt-5 flex flex-wrap gap-3">
+                    <a
+                      href={details.externalUrl}
+                      class="font-mono text-xs uppercase text-stone-900 underline underline-offset-4"
+                    >
+                      Get It ↗
+                    </a>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+</main>

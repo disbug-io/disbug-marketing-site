@@ -1,0 +1,39 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ContentPage from '../components/ContentPage.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const excluded = new Set(['/', '/contact-us/', '/pricing/', '/en/']);
+  const pages = (await getCollection('marketing')).filter(
+    (page) => !excluded.has(page.data.url),
+  );
+  return pages.map((page) => ({
+    params: { slug: page.data.url.replace(/^\//, '').replace(/\/$/, '') },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: CollectionEntry<'marketing'>;
+}
+
+const { page } = Astro.props;
+const labels: Record<string, string> = {
+  '/about-us/': 'About Disbug',
+  '/affiliate-program/': 'Affiliate Program',
+  '/affiliate-terms/': 'Affiliate Program',
+};
+---
+
+<BaseLayout
+  title={page.data.title}
+  description={page.data.description}
+  canonicalUrl={page.data.canonical_url}
+  image={page.data.image}
+>
+  <ContentPage
+    page={page}
+    label={labels[page.data.url] || 'Legal Information'}
+  />
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import BlogIndex from '../../../../components/BlogIndex.astro';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getBlogPosts } from '../../../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  const authors = new Map<string, string>();
+  for (const post of posts)
+    if (post.data.author_slug)
+      authors.set(post.data.author_slug, post.data.author);
+  return [...authors.entries()].map(([slug, name]) => ({
+    params: { author: slug },
+    props: {
+      name,
+      posts: posts.filter((post) => post.data.author_slug === slug),
+    },
+  }));
+}
+
+const { name, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={name}
+  description={`${posts.length} articles written by ${name} for the Disbug blog.`}
+  robots="noindex, follow"
+>
+  <BlogIndex title={name} posts={posts} />
+</BaseLayout>
