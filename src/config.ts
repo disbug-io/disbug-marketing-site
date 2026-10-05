@@ -9,3 +9,6 @@ export const appHref = (path = '/') =>
 export const loginUrl = appHref('/accounts/login/');
 export const signupUrl = appHref('/accounts/signup/');
 export const dashboardUrl = appHref('/');
+
+/** Public ingest key for the landing-page demo widget on `/` only. */
+export const LANDING_PAGE_WIDGET_KEY = 'pk_live_IJSUFZM62AF6ZLVX7SCVJ5NH';
