@@ -1,0 +1,13 @@
+---
+import body from '../components/lifetime-deal-body.html?raw';
+import script from '../components/lifetime-deal-script.html?raw';
+import LifetimeDealLayout from '../layouts/LifetimeDealLayout.astro';
+---
+
+<LifetimeDealLayout
+  title="Disbug Founding Lifetime Deal"
+  description="Pay once for Disbug and capture complete browser-to-agent bug context for life."
+>
+  <Fragment set:html={body} />
+  <Fragment set:html={script} />
+</LifetimeDealLayout>

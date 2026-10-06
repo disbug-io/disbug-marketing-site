@@ -4,7 +4,13 @@ import ContentPage from '../components/ContentPage.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
-  const excluded = new Set(['/', '/contact-us/', '/pricing/', '/en/']);
+  const excluded = new Set([
+    '/',
+    '/contact-us/',
+    '/lifetime-deal/',
+    '/pricing/',
+    '/en/',
+  ]);
   const pages = (await getCollection('marketing')).filter(
     (page) => !excluded.has(page.data.url),
   );
