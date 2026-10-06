@@ -1,162 +1,210 @@
 ﻿<script>
-    (function () {
-      const plans = {
-        1: {
-          name: 'Solo', users: 1, sessions: '1,000', price: 49, annual: '$168/year',
-          sessionCopy: 'Includes 1,000 stored sessions.',
-          competitors: ['Jam charges $168/year for one creator.', 'Bird Eats Bug starts at $600/year for five members.']
-        },
-        5: {
-          name: 'Team', users: 5, sessions: '5,000', price: 149, annual: '$840/year',
-          sessionCopy: 'Includes 5,000 stored sessions. Save $96 versus five Solo licenses.',
-          competitors: ['Five Jam creators cost $840 every year.', 'Bird Eats Bug starts at $600/year for five members.']
-        },
-        10: {
-          name: 'Business', users: 10, sessions: '10,000', price: 299, annual: '$1,680/year',
-          sessionCopy: 'Includes 10,000 stored sessions.',
-          competitors: ['Ten Jam creators cost $1,680 every year.', 'Disbug Business is $299 once, with no annual renewal.']
-        }
-      };
-      const upgradeFeatures = {
-        5: ['5 dashboard users and 5,000 stored sessions', 'Team invitations and shared projects', 'Admin and member roles', 'Session assignments and assignee filters', 'Agent activity history'],
-        10: ['10 dashboard users and 10,000 stored sessions', 'Multiple managed agent connections', 'API keys for custom automations', 'Fair-use AI titles and voice-to-text', 'Priority email support']
-      };
-      const segments = Array.from(document.querySelectorAll('.segment'));
-      const featureItems = Array.from(document.querySelectorAll('.feature-item[data-min-users]'));
-      const selectedPlan = document.getElementById('selectedPlan');
-      const planPrice = document.getElementById('planPrice');
-      const annualAnchor = document.getElementById('annualAnchor');
-      const sessionLimit = document.getElementById('sessionLimit');
-      const purchaseButton = document.getElementById('purchaseButton');
-      const competitorCopy = document.getElementById('competitorCopy');
-      const modal = document.getElementById('upsellModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalPrice = document.getElementById('modalPrice');
-      const modalAnchor = document.getElementById('modalAnchor');
-      const modalLead = document.getElementById('modalLead');
-      const modalFeatures = document.getElementById('modalFeatures');
-      const modalClose = document.getElementById('modalClose');
-      const continueCurrent = document.getElementById('continueCurrent');
-      const upgradeButton = document.getElementById('upgradeButton');
-      const toast = document.getElementById('toast');
-      let currentUsers = 5;
-      let upgradeUsers = 10;
-      let toastTimer;
-      let tickerTimer;
-      let tickerMessageIndex = 0;
-      let tickerCharacterIndex = 0;
-      let tickerDeleting = false;
+  (function () {
+    const lifetimeDealStartUrl = __LIFETIME_DEAL_START_URL__;
+    const plans = {
+      1: {
+        name: 'Solo',
+        tier: 'solo',
+        users: 1,
+        sessions: '1,000',
+        price: 49,
+        annual: '$168/year',
+        sessionCopy: 'Includes 1,000 stored sessions.',
+        competitors: [
+          'Jam charges $168/year for one creator.',
+          'Bird Eats Bug starts at $600/year for five members.',
+        ],
+      },
+      5: {
+        name: 'Team',
+        tier: 'team',
+        users: 5,
+        sessions: '5,000',
+        price: 149,
+        annual: '$840/year',
+        sessionCopy:
+          'Includes 5,000 stored sessions. Save $96 versus five Solo licenses.',
+        competitors: [
+          'Five Jam creators cost $840 every year.',
+          'Bird Eats Bug starts at $600/year for five members.',
+        ],
+      },
+      10: {
+        name: 'Business',
+        tier: 'business',
+        users: 10,
+        sessions: '10,000',
+        price: 299,
+        annual: '$1,680/year',
+        sessionCopy: 'Includes 10,000 stored sessions.',
+        competitors: [
+          'Ten Jam creators cost $1,680 every year.',
+          'Disbug Business is $299 once, with no annual renewal.',
+        ],
+      },
+    };
+    const upgradeFeatures = {
+      5: [
+        '5 dashboard users and 5,000 stored sessions',
+        'Team invitations and shared projects',
+        'Admin and member roles',
+        'Session assignments and assignee filters',
+        'Agent activity history',
+      ],
+      10: [
+        '10 dashboard users and 10,000 stored sessions',
+        'Multiple managed agent connections',
+        'API keys for custom automations',
+        'Fair-use AI titles and voice-to-text',
+        'Priority email support',
+      ],
+    };
+    const segments = Array.from(document.querySelectorAll('.segment'));
+    const featureItems = Array.from(
+      document.querySelectorAll('.feature-item[data-min-users]'),
+    );
+    const selectedPlan = document.getElementById('selectedPlan');
+    const planPrice = document.getElementById('planPrice');
+    const annualAnchor = document.getElementById('annualAnchor');
+    const sessionLimit = document.getElementById('sessionLimit');
+    const purchaseButton = document.getElementById('purchaseButton');
+    const competitorCopy = document.getElementById('competitorCopy');
+    const modal = document.getElementById('upsellModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalAnchor = document.getElementById('modalAnchor');
+    const modalLead = document.getElementById('modalLead');
+    const modalFeatures = document.getElementById('modalFeatures');
+    const modalClose = document.getElementById('modalClose');
+    const continueCurrent = document.getElementById('continueCurrent');
+    const upgradeButton = document.getElementById('upgradeButton');
+    let currentUsers = 5;
+    let upgradeUsers = 10;
+    let tickerTimer;
+    let tickerMessageIndex = 0;
+    let tickerCharacterIndex = 0;
+    let tickerDeleting = false;
 
-      function typeCompetitorMessage() {
-        const messages = plans[currentUsers].competitors;
-        const message = messages[tickerMessageIndex % messages.length];
-        const nextLength = tickerDeleting ? tickerCharacterIndex - 1 : tickerCharacterIndex + 1;
-        tickerCharacterIndex = Math.max(0, Math.min(message.length, nextLength));
-        competitorCopy.textContent = message.slice(0, tickerCharacterIndex);
+    function typeCompetitorMessage() {
+      const messages = plans[currentUsers].competitors;
+      const message = messages[tickerMessageIndex % messages.length];
+      const nextLength = tickerDeleting
+        ? tickerCharacterIndex - 1
+        : tickerCharacterIndex + 1;
+      tickerCharacterIndex = Math.max(0, Math.min(message.length, nextLength));
+      competitorCopy.textContent = message.slice(0, tickerCharacterIndex);
 
-        let delay = tickerDeleting ? 12 : 25;
-        if (!tickerDeleting && tickerCharacterIndex === message.length) {
-          tickerDeleting = true;
-          delay = 2200;
-        } else if (tickerDeleting && tickerCharacterIndex === 0) {
-          tickerDeleting = false;
-          tickerMessageIndex = (tickerMessageIndex + 1) % messages.length;
-          delay = 350;
-        }
-        tickerTimer = window.setTimeout(typeCompetitorMessage, delay);
-      }
-
-      function resetCompetitorTicker() {
-        window.clearTimeout(tickerTimer);
-        tickerMessageIndex = 0;
-        tickerCharacterIndex = 0;
+      let delay = tickerDeleting ? 12 : 25;
+      if (!tickerDeleting && tickerCharacterIndex === message.length) {
+        tickerDeleting = true;
+        delay = 2200;
+      } else if (tickerDeleting && tickerCharacterIndex === 0) {
         tickerDeleting = false;
-        const message = plans[currentUsers].competitors[0];
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          competitorCopy.textContent = message;
-          return;
-        }
-        competitorCopy.textContent = '';
-        typeCompetitorMessage();
+        tickerMessageIndex = (tickerMessageIndex + 1) % messages.length;
+        delay = 350;
       }
+      tickerTimer = window.setTimeout(typeCompetitorMessage, delay);
+    }
 
-      function updatePlan(users) {
-        const plan = plans[users];
-        currentUsers = users;
-        selectedPlan.textContent = plan.name + ' Â· ' + plan.users + (plan.users === 1 ? ' dashboard user' : ' dashboard users');
-        planPrice.textContent = '$' + plan.price;
-        annualAnchor.textContent = plan.annual;
-        sessionLimit.textContent = plan.sessionCopy;
-        purchaseButton.textContent = 'Get ' + plan.name + ' lifetime access';
-        resetCompetitorTicker();
-        segments.forEach(function (segment) {
-          const active = Number(segment.dataset.users) === users;
-          segment.classList.toggle('active', active);
-          segment.setAttribute('aria-pressed', String(active));
-        });
-        featureItems.forEach(function (feature) {
-          const included = users >= Number(feature.dataset.minUsers);
-          feature.classList.toggle('is-included', included);
-          feature.classList.toggle('is-excluded', !included);
-        });
+    function resetCompetitorTicker() {
+      window.clearTimeout(tickerTimer);
+      tickerMessageIndex = 0;
+      tickerCharacterIndex = 0;
+      tickerDeleting = false;
+      const message = plans[currentUsers].competitors[0];
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        competitorCopy.textContent = message;
+        return;
       }
-      function openUpsell(nextUsers) {
-        const nextPlan = plans[nextUsers];
-        upgradeUsers = nextUsers;
-        modalTitle.textContent = nextUsers === 5 ? 'Unlock the team workflow' : 'Unlock advanced automation';
-        modalPrice.textContent = '$' + nextPlan.price + ' lifetime';
-        modalAnchor.textContent = nextPlan.annual;
-        modalLead.textContent = nextUsers === 5
+      competitorCopy.textContent = '';
+      typeCompetitorMessage();
+    }
+
+    function updatePlan(users) {
+      const plan = plans[users];
+      currentUsers = users;
+      selectedPlan.textContent =
+        plan.name +
+        ' Â· ' +
+        plan.users +
+        (plan.users === 1 ? ' dashboard user' : ' dashboard users');
+      planPrice.textContent = '$' + plan.price;
+      annualAnchor.textContent = plan.annual;
+      sessionLimit.textContent = plan.sessionCopy;
+      purchaseButton.textContent = 'Get ' + plan.name + ' lifetime access';
+      resetCompetitorTicker();
+      segments.forEach(function (segment) {
+        const active = Number(segment.dataset.users) === users;
+        segment.classList.toggle('active', active);
+        segment.setAttribute('aria-pressed', String(active));
+      });
+      featureItems.forEach(function (feature) {
+        const included = users >= Number(feature.dataset.minUsers);
+        feature.classList.toggle('is-included', included);
+        feature.classList.toggle('is-excluded', !included);
+      });
+    }
+    function openUpsell(nextUsers) {
+      const nextPlan = plans[nextUsers];
+      upgradeUsers = nextUsers;
+      modalTitle.textContent =
+        nextUsers === 5
+          ? 'Unlock the team workflow'
+          : 'Unlock advanced automation';
+      modalPrice.textContent = '$' + nextPlan.price + ' lifetime';
+      modalAnchor.textContent = nextPlan.annual;
+      modalLead.textContent =
+        nextUsers === 5
           ? 'Move to 5 users and unlock the collaboration features that turn individual reports into a team workflow.'
           : 'Move to 10 users and unlock managed agent access, API automation, fair-use AI, and priority email support.';
-        modalFeatures.innerHTML = '';
-        upgradeFeatures[nextUsers].forEach(function (feature) {
-          const item = document.createElement('li');
-          item.textContent = feature;
+      modalFeatures.innerHTML = '';
+      upgradeFeatures[nextUsers].forEach(function (feature) {
+        const item = document.createElement('li');
+        item.textContent = feature;
         modalFeatures.appendChild(item);
-        });
-        continueCurrent.textContent = 'No thanks â€” continue with ' + plans[currentUsers].name;
-        upgradeButton.textContent = 'Upgrade to ' + nextPlan.name + ' â€” $' + nextPlan.price + ' once';
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('modal-open');
-        modalClose.focus();
-      }
-      function closeUpsell() {
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('modal-open');
-        purchaseButton.focus();
-      }
-      function showToast(message) {
-        window.clearTimeout(toastTimer);
-        toast.textContent = message;
-        toast.classList.add('visible');
-        toastTimer = window.setTimeout(function () { toast.classList.remove('visible'); }, 2800);
-      }
-      segments.forEach(function (segment) {
-        segment.addEventListener('click', function () { updatePlan(Number(segment.dataset.users)); });
       });
-      purchaseButton.addEventListener('click', function () {
-        if (currentUsers === 1) { openUpsell(5); return; }
-        if (currentUsers === 5) { openUpsell(10); return; }
-        showToast('Business lifetime access selected â€” checkout would open here.');
+      continueCurrent.textContent =
+        'No thanks â€” continue with ' + plans[currentUsers].name;
+      upgradeButton.textContent =
+        'Upgrade to ' + nextPlan.name + ' â€” $' + nextPlan.price + ' once';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      modalClose.focus();
+    }
+    function closeUpsell() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      purchaseButton.focus();
+    }
+    function startLifetimeDeal(users) {
+      const url = new URL(lifetimeDealStartUrl);
+      url.searchParams.set('plan', plans[users].tier);
+      window.location.assign(url.toString());
+    }
+    segments.forEach(function (segment) {
+      segment.addEventListener('click', function () {
+        updatePlan(Number(segment.dataset.users));
       });
-      modalClose.addEventListener('click', closeUpsell);
-      continueCurrent.addEventListener('click', function () {
-        const planName = plans[currentUsers].name;
+    });
+    purchaseButton.addEventListener('click', function () {
+      startLifetimeDeal(currentUsers);
+    });
+    modalClose.addEventListener('click', closeUpsell);
+    continueCurrent.addEventListener('click', function () {
+      startLifetimeDeal(currentUsers);
+    });
+    upgradeButton.addEventListener('click', function () {
+      startLifetimeDeal(upgradeUsers);
+    });
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeUpsell();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('open'))
         closeUpsell();
-        showToast(planName + ' lifetime access selected â€” checkout would open here.');
-      });
-      upgradeButton.addEventListener('click', function () {
-        updatePlan(upgradeUsers);
-        closeUpsell();
-        showToast(plans[upgradeUsers].name + ' unlocked. Your lifetime package has been updated.');
-      });
-      modal.addEventListener('click', function (event) { if (event.target === modal) closeUpsell(); });
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && modal.classList.contains('open')) closeUpsell();
-      });
-      updatePlan(5);
-    }());
-  </script>
+    });
+    updatePlan(5);
+  })();
+</script>
