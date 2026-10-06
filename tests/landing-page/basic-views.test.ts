@@ -11,7 +11,9 @@ describe('landing page (ported from disbug_v2 test_basic_views.py)', () => {
     expect(landingPage).toContain('I want to set up Disbug. Silently read');
     expect(landingPage).not.toContain('with a fresh login');
     expect(landingPage).toContain('Silently read');
-    expect(landingPage).toContain('Non-install onboarding actions are approved');
+    expect(landingPage).toContain(
+      'Non-install onboarding actions are approved',
+    );
     expect(landingPage).toContain('ask before installing or upgrading the CLI');
   });
 
