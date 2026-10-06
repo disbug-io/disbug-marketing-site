@@ -1,6 +1,7 @@
 ---
 import LandingPage from '../components/LandingPage.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getWidgetSrc, LANDING_PAGE_WIDGET_KEY } from '../lib/widget';
 ---
 
 <BaseLayout
@@ -10,4 +11,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <main id="main-content">
     <LandingPage />
   </main>
+  <script
+    slot="page-scripts"
+    type="module"
+    src={getWidgetSrc()}
+    data-project-key={LANDING_PAGE_WIDGET_KEY}
+    data-placement="bottom-right"
+    data-bar-placement="bottom-center"
+    data-success-placement="top-center"
+    data-widget-animation="true"
+  ></script>
 </BaseLayout>
