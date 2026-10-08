@@ -1,4 +1,4 @@
-﻿<script>
+<script>
   (function () {
     const lifetimeDealStartUrl = __LIFETIME_DEAL_START_URL__;
     const plans = {
@@ -125,7 +125,7 @@
       currentUsers = users;
       selectedPlan.textContent =
         plan.name +
-        ' Â· ' +
+        ' \u00B7 ' +
         plan.users +
         (plan.users === 1 ? ' dashboard user' : ' dashboard users');
       planPrice.textContent = '$' + plan.price;
@@ -164,9 +164,9 @@
         modalFeatures.appendChild(item);
       });
       continueCurrent.textContent =
-        'No thanks â€” continue with ' + plans[currentUsers].name;
+        'No thanks \u2014 continue with ' + plans[currentUsers].name;
       upgradeButton.textContent =
-        'Upgrade to ' + nextPlan.name + ' â€” $' + nextPlan.price + ' once';
+        'Upgrade to ' + nextPlan.name + ' \u2014 $' + nextPlan.price + ' once';
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');

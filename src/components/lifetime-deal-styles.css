@@ -30,10 +30,14 @@
   box-sizing: border-box;
 }
 html {
+  margin: 0;
+  padding: 0;
   scroll-behavior: smooth;
 }
 body {
   margin: 0;
+  padding: 0;
+  min-height: 100%;
   background: var(--stone-50);
   color: var(--stone-800);
   font-family:
@@ -91,6 +95,7 @@ summary:focus-visible {
   position: sticky;
   top: 0;
   z-index: 50;
+  margin: 0;
   height: 64px;
   border-bottom: 1px solid var(--stone-100);
   background: rgb(255 255 255 / 0.84);
@@ -441,7 +446,7 @@ main {
   color: var(--emerald-700);
 }
 .feature-item.is-included .feature-icon::before {
-  content: 'âœ“';
+  content: '\2713';
 }
 .feature-item.is-excluded {
   color: var(--stone-500);
@@ -452,7 +457,7 @@ main {
   color: var(--rose-500);
 }
 .feature-item.is-excluded .feature-icon::before {
-  content: 'Ã—';
+  content: '\00D7';
 }
 .feature-note {
   position: relative;
@@ -848,7 +853,8 @@ main {
 }
 
 .site-footer {
-  padding: 48px 0 28px;
+  margin: 0;
+  padding: 48px 0 0;
   background: var(--stone-900);
   color: var(--stone-0);
 }
@@ -876,7 +882,7 @@ main {
 }
 .footer-bottom {
   margin-top: 38px;
-  padding-top: 20px;
+  padding: 20px 0 28px;
   border-top: 1px solid rgb(255 255 255 / 0.1);
   color: rgb(255 255 255 / 0.32);
   text-align: center;
@@ -984,7 +990,7 @@ main {
 .modal-feature-list li::before {
   color: var(--lime-700);
   font-weight: 700;
-  content: 'âœ“';
+  content: '\2713';
 }
 .modal-footer {
   position: sticky;
