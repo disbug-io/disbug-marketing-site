@@ -1,13 +1,17 @@
 ---
 import body from '../components/lifetime-deal-body.html?raw';
 import script from '../components/lifetime-deal-script.html?raw';
-import { APP_URL } from '../config';
+import { APP_URL, lifetimeDealStartUrl } from '../config';
 import LifetimeDealLayout from '../layouts/LifetimeDealLayout.astro';
 
-const lifetimeDealStartUrl = `${APP_URL}/lifetime-deal/start/`;
+const lifetimeDealStartBaseUrl = `${APP_URL}/lifetime-deal/start/`;
 const checkoutScript = script.replace(
   '__LIFETIME_DEAL_START_URL__',
-  JSON.stringify(lifetimeDealStartUrl),
+  JSON.stringify(lifetimeDealStartBaseUrl),
+);
+const pageBody = body.replaceAll(
+  '__LIFETIME_DEAL_TEAM_START_URL__',
+  lifetimeDealStartUrl('team'),
 );
 ---
 
@@ -15,6 +19,6 @@ const checkoutScript = script.replace(
   title="Disbug Founding Lifetime Deal"
   description="Pay once for Disbug and capture complete browser-to-agent bug context for life."
 >
-  <Fragment set:html={body} />
+  <Fragment set:html={pageBody} />
   <Fragment set:html={checkoutScript} />
 </LifetimeDealLayout>

@@ -9,3 +9,6 @@ export const appHref = (path = '/') =>
 export const loginUrl = appHref('/accounts/login/');
 export const signupUrl = appHref('/accounts/signup/');
 export const dashboardUrl = appHref('/');
+
+export const lifetimeDealStartUrl = (plan = 'team') =>
+  appHref(`/lifetime-deal/start/?plan=${encodeURIComponent(plan)}`);
